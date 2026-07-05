@@ -1,2 +1,9 @@
 skills/
 node_modules/
+
+# Large ZIP files — too big for git, served via download/ instead
+download/product_images_package.zip
+download/product_images_package_part1.zip
+download/product_images_package_part2.zip
+download/product_images_package_part3.zip
+download/product_images_package_part4.zip
