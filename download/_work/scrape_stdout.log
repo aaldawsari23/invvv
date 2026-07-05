@@ -1,0 +1,2 @@
+2026-07-05 00:01:31,399 [INFO] Loaded 4498 products to process
+2026-07-05 00:01:36,581 [INFO] Progress: 5/4498 (0.1%) | ok=5 fail=0 | engines: bing=4 ddg=1 google=0 yandex=0 brave=0 | rate=1.0/s eta=4656s
