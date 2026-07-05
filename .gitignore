@@ -7,3 +7,16 @@ download/product_images_package_part1.zip
 download/product_images_package_part2.zip
 download/product_images_package_part3.zip
 download/product_images_package_part4.zip
+
+# Netlify deployment ZIPs (also too big for git history)
+download/netlify_deploy.zip
+download/netlify_deploy_part1.zip
+download/netlify_deploy_part2.zip
+download/netlify_deploy_part3.zip
+
+# Work logs
+download/_work/
+
+# Local scripts logs
+scripts/*.log
+scripts/push.log
