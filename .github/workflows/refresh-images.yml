@@ -1,0 +1,75 @@
+name: Refresh trusted product images
+
+on:
+  workflow_dispatch:
+    inputs:
+      limit:
+        description: "Limit products. Empty = all"
+        required: false
+        default: "50"
+      ids:
+        description: "Comma-separated product num values, e.g. 24053,24054"
+        required: false
+        default: ""
+      replace:
+        description: "Replace existing images after strict validation"
+        required: true
+        default: "false"
+        type: choice
+        options: ["false", "true"]
+      min_score:
+        description: "Minimum confidence score"
+        required: true
+        default: "62"
+
+permissions:
+  contents: write
+
+jobs:
+  refresh-images:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements-images.txt
+
+      - name: Audit existing image logs
+        run: |
+          python scripts/scrape_images_trusted.py --audit-existing || true
+
+      - name: Run trusted scraper
+        run: |
+          CMD="python scripts/scrape_images_trusted.py --workers 3 --min-score ${{ github.event.inputs.min_score }}"
+          if [ "${{ github.event.inputs.replace }}" = "true" ]; then CMD="$CMD --replace"; fi
+          if [ -n "${{ github.event.inputs.limit }}" ]; then CMD="$CMD --limit ${{ github.event.inputs.limit }}"; fi
+          if [ -n "${{ github.event.inputs.ids }}" ]; then CMD="$CMD --ids '${{ github.event.inputs.ids }}'"; fi
+          echo "$CMD"
+          eval "$CMD"
+
+      - name: Rebuild product index if possible
+        run: |
+          if [ -f scripts/build_product_index.py ] && [ -f download/_work/products.csv ]; then
+            python scripts/build_product_index.py
+          else
+            echo "Skipping product_index rebuild: products.csv or script missing."
+          fi
+
+      - name: Commit image updates
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@users.noreply.github.com"
+          git add download/product_images download/product_images_old download/product_index.json download/_work/*.csv download/_work/*.log || true
+          if git diff --cached --quiet; then
+            echo "No image changes."
+          else
+            git commit -m "Refresh trusted product images"
+            git push
+          fi
