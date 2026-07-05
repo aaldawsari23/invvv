@@ -41,26 +41,32 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements-images.txt
 
+      - name: Ensure products.csv exists
+        run: |
+          if [ ! -f download/_work/products.csv ]; then
+            python scripts/product_index_to_products_csv.py
+          fi
+
       - name: Audit existing image logs
         run: |
           python scripts/scrape_images_trusted.py --audit-existing || true
 
       - name: Run trusted scraper
+        env:
+          LIMIT: ${{ github.event.inputs.limit }}
+          IDS: ${{ github.event.inputs.ids }}
+          REPLACE: ${{ github.event.inputs.replace }}
+          MIN_SCORE: ${{ github.event.inputs.min_score }}
         run: |
-          CMD="python scripts/scrape_images_trusted.py --workers 3 --min-score ${{ github.event.inputs.min_score }}"
-          if [ "${{ github.event.inputs.replace }}" = "true" ]; then CMD="$CMD --replace"; fi
-          if [ -n "${{ github.event.inputs.limit }}" ]; then CMD="$CMD --limit ${{ github.event.inputs.limit }}"; fi
-          if [ -n "${{ github.event.inputs.ids }}" ]; then CMD="$CMD --ids '${{ github.event.inputs.ids }}'"; fi
-          echo "$CMD"
-          eval "$CMD"
+          ARGS="--workers 3 --min-score ${MIN_SCORE}"
+          if [ "${REPLACE}" = "true" ]; then ARGS="${ARGS} --replace"; fi
+          if [ -n "${LIMIT}" ]; then ARGS="${ARGS} --limit ${LIMIT}"; fi
+          if [ -n "${IDS}" ]; then ARGS="${ARGS} --ids ${IDS}"; fi
+          python scripts/scrape_images_trusted.py ${ARGS}
 
-      - name: Rebuild product index if possible
+      - name: Rebuild product index
         run: |
-          if [ -f scripts/build_product_index.py ] && [ -f download/_work/products.csv ]; then
-            python scripts/build_product_index.py
-          else
-            echo "Skipping product_index rebuild: products.csv or script missing."
-          fi
+          python scripts/build_product_index.py
 
       - name: Commit image updates
         run: |
