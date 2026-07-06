@@ -3,35 +3,46 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>PT Inventory Analyzer</title>
+<title>Rehab Decision Catalogue</title>
 <link rel="stylesheet" href="analyzer-lite.css">
 </head>
 <body>
 <div class="app">
 <section class="box hero">
   <div>
-    <h1>محلل جرد العلاج الطبيعي</h1>
-    <p class="muted">نسخة مستقرة وخفيفة. التحليل يتم على دفعات حتى لا يعلق المتصفح. الصور تظهر فقط إذا تطابق المنتج بالكود أو الباركود.</p>
+    <h1>محرك فرز منتجات التأهيل</h1>
+    <p class="muted">ارفع أي ملف نوبكو / عرض / قائمة مشتريات. الموقع يقرأ الأعمدة، يطابق الكود والباركود مع فهرس التأهيل، يبرز المهم، يستبعد غير المتعلق، ويصدر قائمة مرتبة أفضل من الإكسل.</p>
+    <div class="badges"><span>دعم قرار شراء</span><span>تصنيف ديناميكي</span><span>مطابقة كود/باركود</span><span>تصدير CSV</span></div>
   </div>
-  <label class="drop">
-    <input id="file" type="file" accept=".xlsx,.xls,.csv,.tsv,.txt,.json" hidden>
-    <span><b id="fname">ارفع ملف الجرد</b><br><span class="muted" id="fsub">Excel / CSV / TSV / TXT / JSON</span></span>
+  <label class="drop" id="drop">
+    <input id="file" type="file" accept=".xlsx,.xls,.csv,.tsv,.txt,.json" multiple hidden>
+    <span><b id="fname">ارفع ملف أو عدة ملفات</b><br><span class="muted" id="fsub">Excel / CSV / TSV / TXT / JSON</span></span>
   </label>
 </section>
 <div class="barwrap"><div class="bar" id="bar"></div></div>
 <div class="status" id="status">جاهز.</div>
-<section class="box">
+<section class="box controlsBox">
   <div class="controls">
-    <input id="q" class="input" placeholder="بحث: كود، باركود، وصف">
-    <select id="cat" class="select"><option value="all">كل الفئات</option></select>
-    <select id="imgf" class="select"><option value="all">الصور: الكل</option><option value="with">لها صورة</option><option value="without">بدون صورة</option></select>
+    <input id="q" class="input" placeholder="بحث: وصف، كود، باركود، شركة، فئة">
+    <select id="cat" class="select"><option value="all">كل التصنيفات</option></select>
+    <select id="src" class="select"><option value="all">كل الملفات</option></select>
+    <select id="imgf" class="select"><option value="all">الصور: الكل</option><option value="with">لها صورة من الفهرس</option><option value="without">بدون صورة</option></select>
     <button id="sample" class="btn primary">تجربة</button>
   </div>
-  <div class="tabs" id="tabs" style="margin-top:10px"></div>
+  <div class="tabs" id="tabs"></div>
+  <div class="actions">
+    <button id="selectVisible" class="btn">تحديد الظاهر</button>
+    <button id="clearSelected" class="btn">إلغاء التحديد</button>
+    <button id="exportSelected" class="btn primary">تصدير المحدد</button>
+    <button id="exportInclude" class="btn">تصدير المطابق</button>
+    <button id="exportReview" class="btn">تصدير المراجعة</button>
+    <button id="exportExcluded" class="btn danger">تصدير المستبعد</button>
+  </div>
 </section>
 <section class="stats" id="stats"></section>
+<section class="box qa" id="qa"></section>
 <main class="box">
-  <div id="count" class="status">لا توجد نتائج.</div>
+  <div class="resultsHead"><div id="count" class="status">لا توجد نتائج.</div><div id="selectedCount" class="status">المحدد: 0</div></div>
   <div id="res" class="empty">ارفع ملف أو اضغط تجربة.</div>
   <div id="more" class="more"></div>
 </main>
