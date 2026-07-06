@@ -4,11 +4,39 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>PT Inventory Analyzer</title>
-<style>
-body{margin:0;background:#07111f;color:#f8fafc;font-family:system-ui,Tahoma,Arial,sans-serif}.wrap{max-width:760px;margin:60px auto;padding:20px}.card{background:#0f172a;border:1px solid #26364f;border-radius:24px;padding:24px;line-height:1.9}code{background:#0b1324;border:1px solid #26364f;border-radius:8px;padding:2px 6px;color:#a7f3d0}
-</style>
+<link rel="stylesheet" href="analyzer-lite.css">
 </head>
 <body>
-<div class="wrap"><div class="card"><h1>تم إيقاف النسخة الثقيلة مؤقتًا</h1><p>النسخة السابقة كانت تعلق المتصفح عند تحليل الملفات الكبيرة. تم رفع ملفات النسخة الخفيفة في الريبو، لكن يلزم ربطها يدويًا بملف <code>index.html</code> بسبب رفض أداة GitHub كتابة HTML يحتوي JavaScript.</p><p>الملفات الجاهزة:</p><p><code>download/analyzer-lite.css</code><br><code>download/analyzer-lite.js</code></p></div></div>
+<div class="app">
+<section class="box hero">
+  <div>
+    <h1>محلل جرد العلاج الطبيعي</h1>
+    <p class="muted">نسخة مستقرة وخفيفة. التحليل يتم على دفعات حتى لا يعلق المتصفح. الصور تظهر فقط إذا تطابق المنتج بالكود أو الباركود.</p>
+  </div>
+  <label class="drop">
+    <input id="file" type="file" accept=".xlsx,.xls,.csv,.tsv,.txt,.json" hidden>
+    <span><b id="fname">ارفع ملف الجرد</b><br><span class="muted" id="fsub">Excel / CSV / TSV / TXT / JSON</span></span>
+  </label>
+</section>
+<div class="barwrap"><div class="bar" id="bar"></div></div>
+<div class="status" id="status">جاهز.</div>
+<section class="box">
+  <div class="controls">
+    <input id="q" class="input" placeholder="بحث: كود، باركود، وصف">
+    <select id="cat" class="select"><option value="all">كل الفئات</option></select>
+    <select id="imgf" class="select"><option value="all">الصور: الكل</option><option value="with">لها صورة</option><option value="without">بدون صورة</option></select>
+    <button id="sample" class="btn primary">تجربة</button>
+  </div>
+  <div class="tabs" id="tabs" style="margin-top:10px"></div>
+</section>
+<section class="stats" id="stats"></section>
+<main class="box">
+  <div id="count" class="status">لا توجد نتائج.</div>
+  <div id="res" class="empty">ارفع ملف أو اضغط تجربة.</div>
+  <div id="more" class="more"></div>
+</main>
+</div>
+<script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+<script src="analyzer-lite.js"></script>
 </body>
 </html>
